@@ -1,6 +1,9 @@
 ---
+stage: seedling
+planted: 2026-11-13
+tended: 2026-11-16
 subjects: art, images
-image: /fragments/exemple.svg
+image: /wiki/exemple.svg
 alt: Placeholder for a photograph taken at an exhibition
 draft: true
 ---

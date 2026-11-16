@@ -22,7 +22,7 @@ export function readEntries(dir: string): Entry[] {
   if (!fs.existsSync(full)) return [];
   return fs
     .readdirSync(full)
-    .filter((f) => f.endsWith(".md") && f.toLowerCase() !== "readme.md")
+    .filter((f) => f.endsWith(".md") && f.toLowerCase() !== "readme.md" && !f.startsWith("_"))
     .sort()
     .map((file) => {
       const raw = fs.readFileSync(path.join(full, file), "utf8");

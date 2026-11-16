@@ -1,16 +1,20 @@
 # Écrire sur le site
 
+Le fonctionnement complet (couches raw / wiki, ingestion par un agent) est
+décrit dans `WIKI.md`. Pour ajouter un fragment à la main, ajoutez aussi
+`stage`, `planted` et `tended` (voir `WIKI.md`).
+
 Tout le contenu que vous écrivez vous-même est dans ce dossier. Un fichier
 texte par élément ; on pousse sur `main` et c'est en ligne.
 
-## Un fragment (page d'accueil)
+## Une page du jardin (page d'accueil)
 
 Un fragment est une idée courte, une image ou un lien. Créez
-`content/fragments/NN-nom.md` (le numéro fixe l'ordre) :
+`content/wiki/NN-nom.md` (le numéro fixe l'ordre) :
 
     ---
     subjects: art, mémoire
-    image: /fragments/ma-photo.jpg
+    image: /wiki/ma-photo.jpg
     alt: Ce que montre l'image
     link: /writing/mon-article/
     size: wide
@@ -21,7 +25,7 @@ Un fragment est une idée courte, une image ou un lien. Créez
   qui porte deux sujets est ce qui les relie sur la page d'accueil. Un sujet
   nouveau apparaît tout seul dans la liste.
 - `image`, `alt`, `link`, `size` sont facultatifs. Les images vont dans
-  `public/fragments/`.
+  `public/wiki/`.
 
 ## Un article (blog)
 
