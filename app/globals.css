@@ -567,6 +567,10 @@ body:has([data-page="home"]) .site-footer {
   stroke-width: 3;
 }
 
+.seed[data-young] {
+  fill: #8aae5f;
+}
+
 .seed-light {
   fill: #f3dca2;
 }
@@ -1318,7 +1322,7 @@ kbd {
     padding: 16px 16px 40px;
     flex-direction: column;
     gap: 6px;
-    background: linear-gradient(rgb(234 243 240 / 0.95) 62%, transparent);
+    background: linear-gradient(rgb(247 245 239 / 0.96) 70%, transparent);
   }
   .hud-nav {
     position: absolute;

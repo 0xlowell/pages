@@ -11,11 +11,11 @@ held consistently is easier to think with than a mix of jargon.
 | Word | Means | Pattern term |
 | --- | --- | --- |
 | compost | raw material in `raw/`, unedited | raw sources |
-| seed | the starting point of the garden, at the ground line | |
+| seed | where a plant starts, on the ground line; one per root | |
 | plant | one page in `wiki/` | wiki page |
 | seedling, budding, evergreen | how settled a plant is | maturity |
-| root | a foundational subject, grows below the ground line | |
-| branch | a subject that reaches out, grows above it | |
+| root | a foundational subject; each root is its own plant, below the ground line | |
+| branch | a subject that reaches out, above the ground, on the plant it shares most with | |
 | harvest | a long article in `writing/` | output |
 | field notes | the summary of current work | |
 | tending | reading new compost and updating plants | ingest |

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { GEdge, GNode } from "../lib/graph";
+import type { GEdge, GNode, GPlant } from "../lib/graph";
 import { subjectId } from "../lib/ids";
 import { GITHUB_URL } from "./Site";
 
@@ -26,7 +26,17 @@ const zoneName = (n: GNode) => (n.kind === "subject" ? (n.zone === "root" ? "Roo
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
-export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edges: GEdge[]; subjects: string[] }) {
+export default function Canvas({
+  nodes,
+  edges,
+  subjects,
+  plants,
+}: {
+  nodes: GNode[];
+  edges: GEdge[];
+  subjects: string[];
+  plants: GPlant[];
+}) {
   const vp = useRef<HTMLDivElement>(null);
   const camRef = useRef<Cam | null>(null);
   const flying = useRef(0);
@@ -169,7 +179,13 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
     if (!size.w || ready) return;
     let timer = 0;
     const raf = requestAnimationFrame(() => {
-      frame(null, { instant: true });
+      // On a phone the whole garden would be unreadably small: start on the biggest plant.
+      const big = nodes.filter((n) => n.kind === "subject").sort((a, b) => (b.count ?? 0) - (a.count ?? 0))[0];
+      if (size.w < 700 && big) {
+        const k = 0.6;
+        fly({ k, x: size.w / 2 - (big.x + big.w / 2) * k, y: size.h * 0.56 - (big.y + 18) * k }, true);
+      }
+      else frame(null, { instant: true });
       const h = decodeURIComponent(location.hash.slice(1));
       const id = byId.has(h) ? h : byId.has(subjectId(h)) ? subjectId(h) : null;
       if (id) timer = window.setTimeout(() => select(id), 900);
@@ -178,7 +194,7 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
       cancelAnimationFrame(raf);
       clearTimeout(timer);
     };
-  }, [size.w, ready, frame, byId, select]);
+  }, [size.w, size.h, ready, frame, fly, byId, select, nodes]);
 
   const zoomBy = useCallback(
     (f: number, at?: Pt) => {
@@ -455,32 +471,37 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
                 <line x1={x} y1={0} x2={x} y2={x % 400 === 0 ? 14 : 7} className="tick" />
                 {x % 400 === 0 && (
                   <text x={x + 5} y={26} className="tick-label">
-                    {x === 0 ? "0 · seed" : x > 0 ? `+${x}` : `${x}`}
+                    {x > 0 ? `+${x}` : `${x}`}
                   </text>
                 )}
               </g>
             ))}
-            {nodes
-              .filter((n) => n.kind === "subject")
-              .map((h) => {
-                const p = pos.get(h.id)!;
-                const hx = p.x + h.w / 2;
-                const hy = p.y + HUB / 2;
-                const root = h.zone === "root";
-                const d = `M0 0 C${root ? hx * 0.15 : hx * 0.05} ${hy * 0.65} ${hx * 0.7} ${hy * (root ? 0.85 : 0.95)} ${hx} ${hy}`;
-                return (
-                  <path
-                    key={h.id}
-                    d={d}
-                    pathLength={1}
-                    className={root ? "root" : "stem"}
-                    style={{ strokeWidth: 3 + (h.count ?? 1) * 1.6 }}
-                    data-on={lit?.on.has(h.id) ? "" : undefined}
-                  />
-                );
-              })}
-            <circle cx={0} cy={0} r={16} className="seed" />
-            <circle cx={-4} cy={-5} r={5} className="seed-light" />
+            {plants.map((pl) => (
+              <g key={pl.id}>
+                {[...pl.roots, ...pl.branches].map((hid) => {
+                  const h = byId.get(hid)!;
+                  const p = pos.get(h.id)!;
+                  const hx = p.x + h.w / 2 - pl.x;
+                  const hy = p.y + HUB / 2;
+                  const root = h.zone === "root";
+                  // A little sway, so a straight taproot still reads as something that grew.
+                  const sway = Math.abs(hx) < 40 ? (root ? 34 : -24) : 0;
+                  const d = `M${pl.x} 0 C${pl.x + hx * 0.1 + sway} ${hy * 0.45} ${pl.x + hx * 0.75 - sway} ${hy * 0.85} ${pl.x + hx} ${hy}`;
+                  return (
+                    <path
+                      key={h.id}
+                      d={d}
+                      pathLength={1}
+                      className={root ? "root" : "stem"}
+                      style={{ strokeWidth: 3 + (h.count ?? 1) * 1.6 }}
+                      data-on={lit?.on.has(h.id) ? "" : undefined}
+                    />
+                  );
+                })}
+                <circle cx={pl.x} cy={0} r={pl.roots.length ? 15 : 10} className="seed" data-young={pl.roots.length ? undefined : ""} />
+                <circle cx={pl.x - 4} cy={-5} r={pl.roots.length ? 5 : 3} className="seed-light" />
+              </g>
+            ))}
           </svg>
 
           <svg className="wires" aria-hidden="true">
@@ -632,8 +653,8 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
             Lowell
           </p>
           <p className="hud-lede">
-            A garden of ideas, grown from one seed. Foundations go down as roots; ideas that reach for other
-            fields grow toward the light.
+            A garden of ideas. Each foundation is a plant: its roots hold what I build on, its branches reach
+            for other fields. Where roots meet underground, ideas are shared.
           </p>
         </div>
         <nav className="hud-nav" aria-label="Primary">

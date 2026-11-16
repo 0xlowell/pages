@@ -27,6 +27,11 @@ export type GNode = {
 
 export type GEdge = { id: string; from: string; to: string; subject: string };
 
+// One plant per foundational subject: a seed on the ground line, that subject
+// as its root, and the subjects it reaches for as branches. Subjects with no
+// root at all grow as a young plant of their own.
+export type GPlant = { id: string; x: number; roots: string[]; branches: string[] };
+
 
 // Ideas, articles and the work summary are nodes. Each subject is a node too,
 // and every idea is wired to the subjects it touches.
@@ -72,76 +77,135 @@ export function buildGraph() {
     n.subjects.forEach((s) => edges.push({ id: `${n.id}~${s}`, from: n.id, to: subjectId(s), subject: s }));
   });
 
-  layout(nodes);
-  return { nodes, edges, subjects };
+  const plants = layout(nodes);
+  return { nodes, edges, subjects, plants };
 }
 
-// The graph grows like a plant in cross-section. The seed sits at the origin,
-// on the ground line (y = 0). Root subjects fan out below it, light subjects
-// fan out above. Each idea settles near the subjects it is wired to, pushed
-// outwards from the seed, then cards are nudged apart so none overlap.
-function layout(nodes: GNode[]) {
+// The garden in cross-section. Seeds sit on the ground line (y = 0), spaced
+// along it. Below each seed hangs its root subject; above it, the branch
+// subjects it shares the most plants with. Ideas settle near their subjects:
+// around a root or a branch when they have one subject, between two roots
+// (underground, where root systems meet) when they join two plants, and on the
+// ground line when they join a root to a branch.
+function layout(nodes: GNode[]): GPlant[] {
   const hubs = nodes.filter((n) => n.kind === "subject");
   const ideas = nodes.filter((n) => n.kind !== "subject");
-  const roots = hubs.filter((h) => h.zone === "root");
-  const lights = hubs.filter((h) => h.zone !== "root");
+  const hubOf = new Map(hubs.map((h) => [h.text, h]));
+  const shared = (a: string, b: string) => ideas.filter((n) => n.subjects.includes(a) && n.subjects.includes(b)).length;
 
-  const fan = (list: GNode[], down: boolean) =>
-    list.forEach((h, i) => {
-      const t = list.length === 1 ? 0.5 : i / (list.length - 1);
-      // Alternate sides so the biggest subjects sit close to the stem.
-      const side = i % 2 === 0 ? 1 : -1;
-      const spread = Math.ceil(i / 2) / Math.max(1, Math.ceil((list.length - 1) / 2));
-      const a = Math.PI / 2 + side * spread * 1.05; // radians from the vertical
-      const R = 300 + (i % 2) * 60 + t * 30;
-      const cx = Math.cos(a) * R * 2.1;
-      const cy = (down ? 1 : -1) * Math.abs(Math.sin(a)) * R;
-      h.x = Math.round(cx - h.w / 2);
-      h.y = Math.round(cy - h.h / 2);
+  // 1. Plants: one per root; each branch joins the root it shares most with.
+  const roots = hubs.filter((h) => h.zone === "root");
+  const branches = hubs.filter((h) => h.zone !== "root");
+  const plants: { id: string; roots: GNode[]; branches: GNode[]; size: number }[] = roots.map((r) => ({
+    id: "plant-" + r.id,
+    roots: [r],
+    branches: [],
+    size: 0,
+  }));
+  const orphans: GNode[] = [];
+  branches.forEach((b) => {
+    let best = -1;
+    let score = 0;
+    plants.forEach((p, i) => {
+      const sc = shared(p.roots[0].text, b.text);
+      if (sc > score) {
+        score = sc;
+        best = i;
+      }
     });
-  fan(roots, true);
-  fan(lights, false);
+    if (best >= 0) plants[best].branches.push(b);
+    else orphans.push(b);
+  });
+  // Branches with no root group into young plants, by what they share.
+  orphans.forEach((b) => {
+    const p = plants.find((q) => !q.roots.length && q.branches.some((x) => shared(x.text, b.text) > 0));
+    if (p) p.branches.push(b);
+    else plants.push({ id: "plant-" + b.id, roots: [], branches: [b], size: 0 });
+  });
+  plants.forEach((p) => (p.size = [...p.roots, ...p.branches].reduce((t, h) => t + (h.count || 0), 0)));
+
+  // 2. Order along the ground: biggest in the middle, neighbours by what they share.
+  const bySize = [...plants].sort((a, b) => b.size - a.size);
+  const row: typeof plants = [bySize[0]];
+  const key = (p: (typeof plants)[number]) => [...p.roots, ...p.branches].map((h) => h.text);
+  const link = (a: (typeof plants)[number], b: (typeof plants)[number]) =>
+    key(a).reduce((t, x) => t + key(b).reduce((u, y) => u + shared(x, y), 0), 0);
+  bySize.slice(1).forEach((p) => {
+    const left = link(p, row[0]);
+    const right = link(p, row[row.length - 1]);
+    if (left > right || (left === right && row.length % 2 === 0)) row.unshift(p);
+    else row.push(p);
+  });
+
+  // 3. Seeds along the ground, each given room in proportion to its size.
+  const widths = row.map((p) => 520 + p.size * 55);
+  let cursor = -widths.reduce((t, w) => t + w, 0) / 2;
+  const seedX = new Map<string, number>();
+  row.forEach((p, i) => {
+    seedX.set(p.id, cursor + widths[i] / 2);
+    cursor += widths[i];
+  });
+
+  // 4. Hubs: the root below its seed, branches fanned above it.
+  row.forEach((p) => {
+    const x = seedX.get(p.id)!;
+    p.roots.forEach((r) => {
+      r.x = Math.round(x - r.w / 2);
+      r.y = Math.round(240 - r.h / 2);
+    });
+    p.branches.forEach((b, i) => {
+      const n = p.branches.length;
+      const t = n === 1 ? 0 : i / (n - 1) - 0.5;
+      b.x = Math.round(x + t * 520 - b.w / 2);
+      b.y = Math.round(-300 - Math.abs(t) * -60 - (i % 2) * 70 - b.h / 2);
+    });
+  });
 
   const centre = (n: GNode) => ({ x: n.x + n.w / 2, y: n.y + n.h / 2 });
-  const hubOf = new Map(hubs.map((h) => [h.text, h]));
 
-  // Where each idea wants to be. An idea with one subject grows around it like
-  // foliage, fanned across the side that faces away from the seed. An idea
-  // with several subjects sits between them, a little further out.
+  // 5. Where each idea wants to be.
   const want = new Map<string, { x: number; y: number }>();
   hubs.forEach((h) => {
     const own = ideas.filter((n) => n.subjects.length === 1 && n.subjects[0] === h.text);
     const c = centre(h);
-    const out = Math.atan2(c.y, c.x || 0.001);
+    const down = h.zone === "root";
     own.forEach((n, i) => {
       const t = own.length === 1 ? 0.5 : i / (own.length - 1);
-      const a = out + (t - 0.5) * Math.min(Math.PI * 1.1, own.length * 0.55);
-      const r = 250 + (i % 2) * 110;
-      want.set(n.id, { x: c.x + Math.cos(a) * r * 1.25, y: c.y + Math.sin(a) * r });
+      const a = (down ? Math.PI / 2 : -Math.PI / 2) + (t - 0.5) * Math.min(Math.PI * 1.15, own.length * 0.6);
+      const r = 230 + (i % 2) * 120;
+      want.set(n.id, { x: c.x + Math.cos(a) * r * 1.2, y: c.y + Math.sin(a) * r });
     });
   });
   ideas.forEach((n) => {
     if (want.has(n.id)) return;
-    const hs = n.subjects.map((s) => hubOf.get(s)!).filter(Boolean).map(centre);
-    const ax = hs.reduce((t, p) => t + p.x, 0) / (hs.length || 1);
-    const ay = hs.reduce((t, p) => t + p.y, 0) / (hs.length || 1);
-    const d = Math.hypot(ax, ay) || 1;
-    want.set(n.id, { x: ax + (ax / d) * 140, y: ay + (ay / d) * 140 });
+    const hs = n.subjects.map((s) => hubOf.get(s)!).filter(Boolean);
+    const cs = hs.map(centre);
+    const ax = cs.reduce((t, p) => t + p.x, 0) / (cs.length || 1);
+    const zones = new Set(hs.map((h) => h.zone));
+    let y: number;
+    if (zones.size > 1) {
+      // A root and a branch: on the ground line, beside the seed rather than on it.
+      y = 40;
+      want.set(n.id, { x: ax + n.w / 2 + 90, y });
+      return;
+    }
+    else if (zones.has("root")) y = 560; // several roots: deep, where root systems meet
+    else y = cs.reduce((t, p) => t + p.y, 0) / (cs.length || 1) - 200;
+    want.set(n.id, { x: ax, y });
   });
+
+  // 6. Nudge cards apart; keep each in its world.
   const P = ideas.map((n, i) => {
     const w = want.get(n.id)!;
-    return { x: w.x + ((i * 37) % 60) - 30, y: w.y + ((i * 53) % 60) - 30 };
+    return { x: w.x + ((i * 37) % 50) - 25, y: w.y + ((i * 53) % 50) - 25 };
   });
-
-  const boxes = () => [
-    ...hubs.map((h) => ({ x: h.x + h.w / 2, y: h.y + h.h / 2, rx: h.w / 2 + 40, ry: h.h / 2 + 30, fixed: true })),
-    ...ideas.map((n, i) => ({ x: P[i].x, y: P[i].y, rx: n.w / 2 + 26, ry: n.h / 2 + 26, fixed: false })),
-  ];
-
-  for (let it = 0; it < 500; it++) {
-    const B = boxes();
+  const off = hubs.length;
+  for (let it = 0; it < 600; it++) {
+    const B = [
+      ...hubs.map((h) => ({ x: h.x + h.w / 2, y: h.y + h.h / 2, rx: h.w / 2 + 40, ry: h.h / 2 + 30, fixed: true })),
+      ...ideas.map((n, i) => ({ x: P[i].x, y: P[i].y, rx: n.w / 2 + 24, ry: n.h / 2 + 24, fixed: false })),
+    ];
     const D = P.map(() => ({ x: 0, y: 0 }));
-    const off = hubs.length;
     for (let i = 0; i < B.length; i++) {
       for (let j = i + 1; j < B.length; j++) {
         const dx = B[j].x - B[i].x;
@@ -150,10 +214,10 @@ function layout(nodes: GNode[]) {
         const oy = B[i].ry + B[j].ry - Math.abs(dy);
         if (ox <= 0 || oy <= 0) continue;
         const horiz = ox < oy;
-        const s = Math.sign(horiz ? dx : dy) || 1;
+        const sgn = Math.sign(horiz ? dx : dy) || 1;
         const amount = (horiz ? ox : oy) / (B[i].fixed || B[j].fixed ? 1 : 2);
-        if (!B[i].fixed) D[i - off][horiz ? "x" : "y"] -= s * amount;
-        if (!B[j].fixed) D[j - off][horiz ? "x" : "y"] += s * amount;
+        if (!B[i].fixed) D[i - off][horiz ? "x" : "y"] -= sgn * amount;
+        if (!B[j].fixed) D[j - off][horiz ? "x" : "y"] += sgn * amount;
       }
     }
     ideas.forEach((n, i) => {
@@ -162,15 +226,20 @@ function layout(nodes: GNode[]) {
       D[i].y += (w.y - P[i].y) * 0.04;
       P[i].x += Math.max(-24, Math.min(24, D[i].x));
       P[i].y += Math.max(-24, Math.min(24, D[i].y));
-      // Ideas of one world stay in it: roots under the ground, the rest above.
       const zones = new Set(n.subjects.map((s) => hubOf.get(s)?.zone));
-      if (zones.size === 1 && zones.has("root")) P[i].y = Math.max(P[i].y, n.h / 2 + 40);
-      if (zones.size === 1 && zones.has("light")) P[i].y = Math.min(P[i].y, -n.h / 2 - 40);
+      if (zones.size === 1 && zones.has("root")) P[i].y = Math.max(P[i].y, n.h / 2 + 50);
+      if (zones.size === 1 && zones.has("light")) P[i].y = Math.min(P[i].y, -n.h / 2 - 50);
     });
   }
-
   ideas.forEach((n, i) => {
     n.x = Math.round(P[i].x - n.w / 2);
     n.y = Math.round(P[i].y - n.h / 2);
   });
+
+  return row.map((p) => ({
+    id: p.id,
+    x: Math.round(seedX.get(p.id)!),
+    roots: p.roots.map((h) => h.id),
+    branches: p.branches.map((h) => h.id),
+  }));
 }
