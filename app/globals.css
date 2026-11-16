@@ -567,6 +567,140 @@ body:has([data-page="home"]) .site-footer {
   stroke-width: 3;
 }
 
+.leaf {
+  fill: #6f9f5e;
+  stroke: #4f7f45;
+  stroke-width: 0.6;
+}
+
+.leaf[data-tone="1"] {
+  fill: #86b36a;
+}
+
+.leaf[data-tone="2"] {
+  fill: #5d8f57;
+}
+
+.leaf-rib {
+  stroke: #d8e8c4;
+  stroke-width: 0.7;
+  opacity: 0.7;
+}
+
+.shrub-stem,
+.shrub-twig {
+  fill: none;
+  stroke: #5d8f57;
+  stroke-linecap: round;
+}
+
+.shrub-stem {
+  stroke-width: 3;
+}
+
+.shrub-twig {
+  stroke-width: 1.3;
+}
+
+.petal {
+  fill: #f2b8b0;
+  stroke: #e39a90;
+  stroke-width: 0.5;
+}
+
+.flower-heart {
+  fill: #e0a43c;
+}
+
+.fruit {
+  fill: #d4643f;
+  stroke: #b04c2d;
+  stroke-width: 0.8;
+}
+
+.fruit-shine {
+  fill: #f6c9b4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .world[data-ready] .shrub {
+    animation: node-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: 900ms;
+  }
+}
+
+.hairs path {
+  fill: none;
+  stroke: #b8956a;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.world[data-lit] .stem-g:not([data-on]) .leaf,
+.world[data-lit] .root-g:not([data-on]) .hairs {
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .world[data-ready] .leaf,
+  .world[data-ready] .hairs {
+    animation: node-in 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: 700ms;
+  }
+}
+
+/* Card emblems */
+.node-head > span:first-child {
+  display: inline-flex;
+  align-items: center;
+}
+
+.emblem {
+  width: 15px;
+  height: 15px;
+  margin-right: 7px;
+  overflow: visible;
+}
+
+.em-stalk {
+  fill: none;
+  stroke: #5d8f57;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.em-leaf {
+  fill: #7fae63;
+}
+
+.em-pressed {
+  fill: #b9a77a;
+}
+
+.em-rib {
+  fill: none;
+  stroke: #fffdf6;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+}
+
+.em-petal {
+  fill: #f2b8b0;
+}
+
+.em-heart {
+  fill: #e0a43c;
+}
+
+.em-fruit {
+  fill: #d4643f;
+}
+
+.em-shine {
+  fill: #f6c9b4;
+}
+
 .seed[data-young] {
   fill: #8aae5f;
 }
@@ -586,7 +720,7 @@ body:has([data-page="home"]) .site-footer {
 .gauge {
   position: absolute;
   z-index: 9;
-  left: 24px;
+  right: 24px;
   pointer-events: none;
   font-family: var(--mono);
   font-size: 11px;
@@ -596,7 +730,7 @@ body:has([data-page="home"]) .site-footer {
 
 .gauge span {
   position: absolute;
-  left: 0;
+  right: 0;
   white-space: nowrap;
 }
 
@@ -704,8 +838,7 @@ body:has([data-page="home"]) .site-footer {
   color: var(--ink);
 }
 
-.node[data-kind="article"] .node-head span:first-child::before,
-.node[data-kind="page"] .node-head span:first-child::before {
+.node[data-kind="never"] .node-head span:first-child::before {
   content: "";
   display: inline-block;
   width: 6px;

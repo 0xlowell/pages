@@ -26,6 +26,83 @@ const zoneName = (n: GNode) => (n.kind === "subject" ? (n.zone === "root" ? "Roo
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
+/* ---------- Botanical drawing helpers ---------- */
+
+type V = [number, number];
+const bez = (p: V[], t: number): V => {
+  const u = 1 - t;
+  return [
+    u * u * u * p[0][0] + 3 * u * u * t * p[1][0] + 3 * u * t * t * p[2][0] + t * t * t * p[3][0],
+    u * u * u * p[0][1] + 3 * u * u * t * p[1][1] + 3 * u * t * t * p[2][1] + t * t * t * p[3][1],
+  ];
+};
+const tangent = (p: V[], t: number): V => {
+  const a = bez(p, Math.max(0, t - 0.01));
+  const b = bez(p, Math.min(1, t + 0.01));
+  const l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  return [(b[0] - a[0]) / l, (b[1] - a[1]) / l];
+};
+const deg = (v: V) => (Math.atan2(v[1], v[0]) * 180) / Math.PI;
+
+// A leaf pointing along +x, base at the origin.
+const LEAF_PATH = "M0 0 C5 -7 15 -8 22 0 C15 8 5 7 0 0Z";
+
+function Leaf({ at, angle, size = 1, tone = 0 }: { at: V; angle: number; size?: number; tone?: number }) {
+  return (
+    <g transform={`translate(${at[0].toFixed(1)} ${at[1].toFixed(1)}) rotate(${angle.toFixed(1)}) scale(${size})`}>
+      <path d={LEAF_PATH} className="leaf" data-tone={tone} />
+      <path d="M1 0 L19 0" className="leaf-rib" />
+    </g>
+  );
+}
+
+// Small emblems for card headers: what kind of growth this is.
+function Emblem({ kind, stage }: { kind: GNode["kind"]; stage?: GNode["stage"] }) {
+  if (kind === "article")
+    return (
+      <svg viewBox="0 0 16 16" className="emblem" aria-hidden="true">
+        <path d="M8 4.5 C8 3 9 2 10.5 1.6" className="em-stalk" />
+        <path d="M9 3 C10.5 1.2 13 1.4 13.6 2.6 C12 3.6 10.4 3.8 9 3Z" className="em-leaf" />
+        <circle cx="8" cy="9.6" r="5" className="em-fruit" />
+        <circle cx="6.3" cy="8" r="1.3" className="em-shine" />
+      </svg>
+    );
+  if (kind === "page")
+    return (
+      <svg viewBox="0 0 16 16" className="emblem" aria-hidden="true">
+        <path d="M3 13 C3 6 8 2.5 13.5 2.5 C13.5 8 10 13 3 13Z" className="em-leaf em-pressed" />
+        <path d="M3 13 L11 5 M6 10 L6 7 M8 8 L10.5 8.3" className="em-rib" />
+      </svg>
+    );
+  if (stage === "seedling")
+    return (
+      <svg viewBox="0 0 16 16" className="emblem" aria-hidden="true">
+        <path d="M8 14 L8 7.5" className="em-stalk" />
+        <path d="M8 8.5 C6.5 5.5 3.5 5 2 6 C3 8.4 6 9.4 8 8.5Z" className="em-leaf" />
+        <path d="M8 7.5 C9.5 4.5 12.5 4 14 5 C13 7.4 10 8.4 8 7.5Z" className="em-leaf" />
+      </svg>
+    );
+  if (stage === "budding")
+    return (
+      <svg viewBox="0 0 16 16" className="emblem" aria-hidden="true">
+        <path d="M8 15 L8 9" className="em-stalk" />
+        {[0, 72, 144, 216, 288].map((a) => (
+          <ellipse key={a} cx="8" cy="3.6" rx="1.9" ry="2.6" transform={`rotate(${a} 8 6.4)`} className="em-petal" />
+        ))}
+        <circle cx="8" cy="6.4" r="1.5" className="em-heart" />
+      </svg>
+    );
+  return (
+    <svg viewBox="0 0 16 16" className="emblem" aria-hidden="true">
+      <path d="M8 15 L8 4" className="em-stalk" />
+      <path d="M8 6 C6 4 3.5 4.2 2.5 5.4 C4 7 6.4 7.2 8 6Z" className="em-leaf" />
+      <path d="M8 9 C10 7 12.5 7.2 13.5 8.4 C12 10 9.6 10.2 8 9Z" className="em-leaf" />
+      <path d="M8 4.5 C7 2.8 7.6 1.4 8 1 C8.4 1.4 9 2.8 8 4.5Z" className="em-leaf" />
+      <path d="M8 12 C6 10.2 3.8 10.4 3 11.4 C4.4 13 6.6 13 8 12Z" className="em-leaf" />
+    </svg>
+  );
+}
+
 export default function Canvas({
   nodes,
   edges,
@@ -478,7 +555,7 @@ export default function Canvas({
             ))}
             {plants.map((pl) => (
               <g key={pl.id}>
-                {[...pl.roots, ...pl.branches].map((hid) => {
+                {[...pl.roots, ...pl.branches].map((hid, hi) => {
                   const h = byId.get(hid)!;
                   const p = pos.get(h.id)!;
                   const hx = p.x + h.w / 2 - pl.x;
@@ -486,18 +563,113 @@ export default function Canvas({
                   const root = h.zone === "root";
                   // A little sway, so a straight taproot still reads as something that grew.
                   const sway = Math.abs(hx) < 40 ? (root ? 34 : -24) : 0;
-                  const d = `M${pl.x} 0 C${pl.x + hx * 0.1 + sway} ${hy * 0.45} ${pl.x + hx * 0.75 - sway} ${hy * 0.85} ${pl.x + hx} ${hy}`;
+                  const pts: V[] = [
+                    [pl.x, 0],
+                    [pl.x + hx * 0.1 + sway, hy * 0.45],
+                    [pl.x + hx * 0.75 - sway, hy * 0.85],
+                    [pl.x + hx, hy],
+                  ];
+                  const d = `M${pts[0][0]} ${pts[0][1]} C${pts[1][0]} ${pts[1][1]} ${pts[2][0]} ${pts[2][1]} ${pts[3][0]} ${pts[3][1]}`;
+                  const on = lit?.on.has(h.id) ? "" : undefined;
+                  const weight = 3 + (h.count ?? 1) * 1.6;
                   return (
-                    <path
-                      key={h.id}
-                      d={d}
-                      pathLength={1}
-                      className={root ? "root" : "stem"}
-                      style={{ strokeWidth: 3 + (h.count ?? 1) * 1.6 }}
-                      data-on={lit?.on.has(h.id) ? "" : undefined}
-                    />
+                    <g key={h.id} className={root ? "root-g" : "stem-g"} data-on={on}>
+                      <path d={d} pathLength={1} className={root ? "root" : "stem"} style={{ strokeWidth: weight }} data-on={on} />
+                      {root
+                        ? // Root hairs: short forked strokes off the root.
+                          [0.3, 0.48, 0.66, 0.82].map((t, i) => {
+                            const at = bez(pts, t);
+                            const tg = tangent(pts, t);
+                            const side = i % 2 ? 1 : -1;
+                            const n: V = [-tg[1] * side, tg[0] * side];
+                            const len = 26 + (i % 3) * 10;
+                            const end: V = [at[0] + n[0] * len + tg[0] * 14, at[1] + n[1] * len + tg[1] * 14];
+                            const mid: V = [(at[0] + end[0]) / 2, (at[1] + end[1]) / 2];
+                            return (
+                              <g key={t} className="hairs">
+                                <path d={`M${at[0].toFixed(1)} ${at[1].toFixed(1)} Q${(mid[0] + tg[0] * 6).toFixed(1)} ${(mid[1] + tg[1] * 6).toFixed(1)} ${end[0].toFixed(1)} ${end[1].toFixed(1)}`} />
+                                <path d={`M${mid[0].toFixed(1)} ${mid[1].toFixed(1)} l${(n[0] * 10 + tg[0] * 12).toFixed(1)} ${(n[1] * 10 + tg[1] * 12).toFixed(1)}`} />
+                              </g>
+                            );
+                          })
+                        : // Leaves along the stem, alternating sides, larger near the base.
+                          [0.22, 0.4, 0.58, 0.74, 0.88].map((t, i) => {
+                            const at = bez(pts, t);
+                            const tg = tangent(pts, t);
+                            const side = (i + hi) % 2 ? 1 : -1;
+                            return <Leaf key={t} at={at} angle={deg(tg) + side * 52} size={1.25 - t * 0.5} tone={i % 3} />;
+                          })}
+                      {!root && (
+                        // A small crown of leaves where the branch opens out.
+                        <g>
+                          <Leaf at={[pl.x + hx, hy]} angle={-150} size={1.1} tone={1} />
+                          <Leaf at={[pl.x + hx, hy]} angle={-30} size={1.1} tone={2} />
+                          <Leaf at={[pl.x + hx, hy]} angle={-90} size={0.9} tone={0} />
+                        </g>
+                      )}
+                    </g>
                   );
                 })}
+                {/* What shows above ground: a shrub that tells the state of the plant.
+                    Height follows its ideas, flowers its budding ones, fruit its harvests. */}
+                {(() => {
+                  const names = [...pl.roots, ...pl.branches].map((id) => byId.get(id)!.text);
+                  const mine = items.filter((n) => n.subjects.some((x) => names.includes(x)));
+                  const flowers = mine.filter((n) => n.kind === "idea" && n.stage === "budding").length;
+                  const fruit = mine.filter((n) => n.kind === "article").length;
+                  const H = 46 + mine.length * 11;
+                  const pts: V[] = [
+                    [pl.x, 0],
+                    [pl.x - 14, -H * 0.35],
+                    [pl.x + 16, -H * 0.7],
+                    [pl.x + 4, -H],
+                  ];
+                  const d = `M${pts[0][0]} 0 C${pts[1][0]} ${pts[1][1]} ${pts[2][0]} ${pts[2][1]} ${pts[3][0]} ${pts[3][1]}`;
+                  const leaves = Math.max(2, Math.round(mine.length * 0.9));
+                  return (
+                    <g className="shrub">
+                      <path d={d} className="shrub-stem" />
+                      {Array.from({ length: leaves }, (_, i) => {
+                        const t = 0.18 + (0.8 * i) / leaves;
+                        const at = bez(pts, t);
+                        const side = i % 2 ? 1 : -1;
+                        return <Leaf key={i} at={at} angle={deg(tangent(pts, t)) + side * 58} size={1.2 - t * 0.45} tone={i % 3} />;
+                      })}
+                      {Array.from({ length: flowers }, (_, i) => {
+                        const t = 0.55 + (0.4 * (i + 0.5)) / Math.max(1, flowers);
+                        const at = bez(pts, t);
+                        const side = i % 2 ? 1 : -1;
+                        const fx = at[0] + side * 16;
+                        const fy = at[1] - 4;
+                        return (
+                          <g key={`f${i}`}>
+                            <path d={`M${at[0]} ${at[1]} Q${(at[0] + fx) / 2} ${at[1] - 2} ${fx} ${fy}`} className="shrub-twig" />
+                            {[0, 72, 144, 216, 288].map((a) => (
+                              <ellipse key={a} cx={fx} cy={fy - 4.2} rx={2.6} ry={3.6} transform={`rotate(${a} ${fx} ${fy})`} className="petal" />
+                            ))}
+                            <circle cx={fx} cy={fy} r={2.2} className="flower-heart" />
+                          </g>
+                        );
+                      })}
+                      {Array.from({ length: fruit }, (_, i) => {
+                        const t = 0.4 + (0.45 * (i + 0.5)) / Math.max(1, fruit);
+                        const at = bez(pts, t);
+                        const side = i % 2 ? -1 : 1;
+                        const fx = at[0] + side * 12;
+                        const fy = at[1] + 14;
+                        return (
+                          <g key={`r${i}`}>
+                            <path d={`M${at[0]} ${at[1]} Q${fx} ${at[1]} ${fx} ${fy - 6}`} className="shrub-twig" />
+                            <circle cx={fx} cy={fy} r={6.5} className="fruit" />
+                            <circle cx={fx - 2.2} cy={fy - 2.2} r={1.8} className="fruit-shine" />
+                          </g>
+                        );
+                      })}
+                      <Leaf at={pts[3]} angle={-120} size={0.9} tone={1} />
+                      <Leaf at={pts[3]} angle={-60} size={0.9} tone={0} />
+                    </g>
+                  );
+                })()}
                 <circle cx={pl.x} cy={0} r={pl.roots.length ? 15 : 10} className="seed" data-young={pl.roots.length ? undefined : ""} />
                 <circle cx={pl.x - 4} cy={-5} r={pl.roots.length ? 5 : 3} className="seed-light" />
               </g>
@@ -558,6 +730,7 @@ export default function Canvas({
               <div key={n.id} {...common} aria-label={`${KIND[n.kind]}: ${n.text}`}>
                 <div className="node-head">
                   <span>
+                    <Emblem kind={n.kind} stage={n.stage} />
                     {KIND[n.kind]}
                     {n.stage && <em className="stage" data-stage={n.stage}>{n.stage}</em>}
                   </span>
