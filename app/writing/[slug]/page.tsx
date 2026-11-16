@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GITHUB_URL } from "../../components/Site";
+import { Arrow, GITHUB_URL } from "../../components/Site";
 import { articles, formatDate } from "../../lib/articles";
 
 export const dynamicParams = false;
@@ -25,27 +25,33 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const other = articles[(index + 1) % articles.length];
 
   return (
-    <article className="wrap">
-      <header className="article-head">
-        <p className="post-meta" style={{ margin: 0 }}>
-          <Link href="/writing/">Writing</Link>
+    <article className="wrap narrow">
+      <header className="page-head">
+        <p className="crumbs">
+          <Link href="/writing/">← Writing</Link>
         </p>
-        <h1 className="page-title" style={{ marginTop: "1rem" }}>{a.title}</h1>
+        <h1 className="page-title">{a.title}</h1>
         <p className="dek">{a.dek}</p>
         <p className="post-meta">
           Lowell, <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read
         </p>
       </header>
-      <div className="prose" style={{ marginTop: "2.5rem" }}>
+      <div className="prose">
         <a.Body />
       </div>
       <nav className="article-end" aria-label="More writing">
         {other.slug !== a.slug && (
-          <p>
-            Next: <Link href={`/writing/${other.slug}/`}>{other.title}</Link>
-          </p>
+          <>
+            <p className="label">Next</p>
+            <p className="next">
+              <Link href={`/writing/${other.slug}/`}>
+                {other.title}
+                <Arrow />
+              </Link>
+            </p>
+          </>
         )}
-        <p>
+        <p className="feedback">
           Comments and corrections are welcome on <a href={GITHUB_URL} rel="me noopener">GitHub</a>.
         </p>
       </nav>

@@ -10,27 +10,25 @@ export const metadata: Metadata = {
 export default function WritingIndex() {
   return (
     <div className="wrap">
-      <div className="article-head">
+      <div className="page-head">
         <h1 className="page-title">Writing</h1>
         <p className="dek">
           Working notes on agents, the applications around them and the boundaries between suggestions and actions.{" "}
           <Link href="/writing/feed.xml" prefetch={false}>Feed</Link>.
         </p>
       </div>
-      <ul className="post-list" style={{ marginTop: "2.5rem" }}>
+      <ul className="posts">
         {articles.map((a) => (
           <li key={a.slug}>
-            <p className="post-meta">
-              <time dateTime={a.date}>{formatDate(a.date)}</time>
-              <br />
-              {a.minutes} min read
-            </p>
-            <div>
-              <h2 style={{ fontSize: "1.375rem", fontWeight: 600, lineHeight: 1.25, margin: "0 0 0.5rem" }}>
-                <Link href={`/writing/${a.slug}/`}>{a.title}</Link>
-              </h2>
-              <p style={{ margin: 0 }}>{a.dek}</p>
-            </div>
+            <Link href={`/writing/${a.slug}/`}>
+              <div>
+                <h2>{a.title}</h2>
+                <p className="dek">{a.dek}</p>
+              </div>
+              <p className="when">
+                <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read
+              </p>
+            </Link>
           </li>
         ))}
       </ul>

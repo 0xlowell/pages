@@ -8,6 +8,7 @@ export type Project = {
   slug: string;
   title: string;
   role: string;
+  kind: "proposed" | "contributing";
   summary: string;
   stage: string;
   lede: string;
@@ -21,6 +22,7 @@ export const projects: Project[] = [
     slug: "hybrid-automation",
     title: "Hybrid automation harness",
     role: "Proposed the architecture",
+    kind: "proposed",
     summary:
       "Automating a business application through its screens without asking a model to decide every click. Explore with an agent, replay validated journeys as procedures, and call the model back only for the step that needs it.",
     stage: "Early, about a month in. Cost and robustness are design goals, not measured results.",
@@ -37,6 +39,7 @@ export const projects: Project[] = [
     slug: "application-authorization",
     title: "Application authorization",
     role: "Proposed the solution",
+    kind: "proposed",
     summary:
       "A shared layer where applications declare business permissions and roles, with a visual map of who can do what. Sign-in stays with the identity provider, and the backend enforces every decision.",
     stage: "Connected local pilot with real Microsoft sign-in and a first application. Not an organisation-wide rollout.",
@@ -53,6 +56,7 @@ export const projects: Project[] = [
     slug: "ai-workspaces",
     title: "AI workspaces and product workflows",
     role: "Continuing existing products",
+    kind: "contributing",
     summary:
       "Contributing to a shared employee AI workspace and an assisted product-intake service: durable conversations, governed tools, reviewed proposals, and recovery after interruptions.",
     stage: "Ongoing development and integration of existing products.",

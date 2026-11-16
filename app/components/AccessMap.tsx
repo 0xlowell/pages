@@ -128,9 +128,9 @@ export default function AccessMap() {
               <text x={X.role + 12} y={r.y + 4.5}>{r.name}</text>
             </g>
           ))}
-          <path className="dg-dash" d={`M${X.perm} 176 H${X.perm + W.perm}`} />
-          <text x={X.perm} y="196" className="dg-text">Manage access</text>
-          <text x={X.perm} y="160" className="dg-text">Use business data</text>
+          <path className="dg-dash" d={`M${X.perm} 184 H${X.perm + W.perm}`} />
+          <text x={X.perm} y="204" className="dg-text">Manage access</text>
+          <text x={X.perm} y="172" className="dg-text">Use business data</text>
           {perms.map((p) => (
             <g key={p.id} className="amap-node" data-kind={p.kind} data-on={permIds.has(p.id)}>
               <rect x={X.perm} y={p.y - H / 2 + (p.kind === "use" ? 6 : 14)} width={W.perm} height={H} rx="8" />

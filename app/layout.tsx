@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SiteFooter, SiteHeader, SITE_URL } from "./components/Site";
+
+const satoshi = localFont({
+  src: [
+    { path: "./fonts/Satoshi-Variable.woff2", style: "normal" },
+    { path: "./fonts/Satoshi-VariableItalic.woff2", style: "italic" },
+  ],
+  weight: "300 900",
+  variable: "--font-satoshi",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL + "/"),
@@ -12,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={satoshi.variable}>
       <body>
         <a className="skip" href="#main">
           Skip to content
