@@ -60,3 +60,16 @@ export function toHtml(markdown: string): string {
 export function toInlineHtml(markdown: string): string {
   return marked.parseInline(markdown, { async: false }) as string;
 }
+
+// The header of one file under /content, e.g. readMeta("subjects.md").
+export function readMeta(file: string): Record<string, string> {
+  const full = path.join(ROOT, file);
+  if (!fs.existsSync(full)) return {};
+  const match = fs.readFileSync(full, "utf8").match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const meta: Record<string, string> = {};
+  match?.[1].split(/\r?\n/).forEach((line) => {
+    const i = line.indexOf(":");
+    if (i > 0) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+  });
+  return meta;
+}

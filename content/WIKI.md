@@ -3,6 +3,25 @@
 This site follows the LLM wiki pattern: you feed raw material, an agent keeps a
 wiki of linked pages up to date, and the site shows the wiki as a garden.
 
+## Glossary
+
+Use these words, and only these, in pages, logs and the interface. A metaphor
+held consistently is easier to think with than a mix of jargon.
+
+| Word | Means | Pattern term |
+| --- | --- | --- |
+| compost | raw material in `raw/`, unedited | raw sources |
+| seed | the starting point of the garden, at the ground line | |
+| plant | one page in `wiki/` | wiki page |
+| seedling, budding, evergreen | how settled a plant is | maturity |
+| root | a foundational subject, grows below the ground line | |
+| branch | a subject that reaches out, grows above it | |
+| harvest | a long article in `writing/` | output |
+| field notes | the summary of current work | |
+| tending | reading new compost and updating plants | ingest |
+| weeding | checking the garden's health | lint |
+| herbarium | the list view: every plant, sorted by subject | index |
+
 ## Layers
 
 - `raw/`: yours. Never edited by the agent.
@@ -25,16 +44,17 @@ wiki of linked pages up to date, and the site shows the wiki as a garden.
     ---
     The idea, in one to three sentences.
 
-- `subjects` decide which bed a plant grows in. A page with two subjects
-  joins two beds with a path.
+- `subjects` decide where a plant grows: around a root below the ground line,
+  or around a branch above it. Which subjects are roots is set in
+  `content/subjects.md`.
 - `stage`: `seedling` for a raw thought, `budding` once it has been worked on,
   `evergreen` when it is settled. Plants grow with their stage and with the
   number of `sources`.
 - `tended` is the last day the page changed.
 
-## Ingest
+## Tending (ingest)
 
-When asked to ingest:
+When asked to tend the garden (or to ingest):
 
 1. Read the files in `raw/` that are not yet listed in any page's `sources`.
 2. For each, either tend existing pages (update the text, add the source,
@@ -44,8 +64,8 @@ When asked to ingest:
    numbers that are not in the raw material.
 4. Add a line to `wiki/_log.md`.
 
-## Health check
+## Weeding (health check)
 
-When asked to check the garden: list pages with no sources, pages that
+When asked to weed the garden (or to check it): list pages with no sources, pages that
 contradict each other, subjects with a single page, and pages not tended for
 three months. Report; change nothing without being asked.
