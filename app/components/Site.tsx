@@ -26,6 +26,8 @@ export function SiteHeader() {
       <div className="col top">
         <Link href="/" className="name">Lowell</Link>
         <nav aria-label="Primary">
+          <Link href="/work/">Work</Link>
+          <Link href="/writing/">Writing</Link>
           <GitHubLink />
         </nav>
       </div>

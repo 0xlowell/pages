@@ -15,9 +15,9 @@ const switzer = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL + "/"),
-  title: { default: "Lowell, AI Engineer", template: "%s | Lowell" },
+  title: { default: "Lowell", template: "%s | Lowell" },
   description:
-    "Lowell is an AI Engineer designing and building AI-powered applications, from agent workflows to the systems around them.",
+    "Subjects Lowell keeps coming back to, and what connects them. For now, mostly software and AI agents.",
   alternates: { types: { "application/rss+xml": "writing/feed.xml" } },
 };
 
