@@ -25,37 +25,30 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <article className="wrap">
-      <header className="case-head">
-        <div>
-          <p className="crumbs">
-            <Link href="/work/">← Projects</Link>
-          </p>
-          <h1 className="page-title">{p.title}</h1>
-          <p className="lede">{p.lede}</p>
-          <dl className="facts">
-            {p.facts.map((f) => (
-              <div key={f.label}>
-                <dt>{f.label}</dt>
-                <dd>{f.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <figure className="case-art">
-          <p.Art />
-        </figure>
+    <article className="col">
+      <header className="page-head">
+        <h1 className="page-title">{p.title}</h1>
+        <p className="lede">{p.lede}</p>
+        <dl className="pairs">
+          {p.facts.map((f) => (
+            <div key={f.label}>
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
       </header>
+      <figure className="case-art">
+        <p.Art />
+      </figure>
       <div className="case-body">
         <p.Body />
       </div>
-      <nav className="case-next" aria-label="More projects">
-        <p className="label">Next project</p>
+      <nav className="page-end" aria-label="More work">
+        <p className="label">Next</p>
         <p className="next">
-          <Link href={`/work/${next.slug}/`}>
-            {next.title}
-            <Arrow />
-          </Link>
+          <Link href={`/work/${next.slug}/`}>{next.title}</Link>
+          <Arrow />
         </p>
       </nav>
     </article>

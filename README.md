@@ -32,7 +32,7 @@ PAGES_BASE_PATH=/pages npm run build
 - `app/lib/articles.ts` and `app/articles/`: writing and article content.
 - `app/components/`: shared presentation and illustrative interactions.
 - `app/globals.css`: design tokens, layout and styles.
-- `app/fonts/`: Satoshi (Fontshare, ITF Free Font License), self-hosted so
+- `app/fonts/`: Switzer (Fontshare, ITF Free Font License), self-hosted so
   pages make no third-party requests.
 - [Anonymized brief](docs/portfolio-brief.md): context for another designer.
 - [Claude prompt](docs/claude-design-prompt.md): an independent design handoff.

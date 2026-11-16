@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function WritingIndex() {
   return (
-    <div className="wrap">
+    <div className="col">
       <div className="page-head">
         <h1 className="page-title">Writing</h1>
         <p className="dek">
@@ -17,17 +17,12 @@ export default function WritingIndex() {
           <Link href="/writing/feed.xml" prefetch={false}>Feed</Link>.
         </p>
       </div>
-      <ul className="posts">
+      <ul className="rows" style={{ marginTop: "2.5rem" }}>
         {articles.map((a) => (
           <li key={a.slug}>
             <Link href={`/writing/${a.slug}/`}>
-              <div>
-                <h2>{a.title}</h2>
-                <p className="dek">{a.dek}</p>
-              </div>
-              <p className="when">
-                <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read
-              </p>
+              <span>{a.title}</span>
+              <time dateTime={a.date}>{formatDate(a.date)}</time>
             </Link>
           </li>
         ))}

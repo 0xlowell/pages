@@ -50,7 +50,7 @@ export default function HybridCase() {
         </div>
       </section>
 
-      <section className="full">
+      <section className="wide">
         <RunLedger />
       </section>
 

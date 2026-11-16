@@ -31,7 +31,7 @@ export default function AccessCase() {
         </div>
       </section>
 
-      <section className="full">
+      <section className="wide">
         <AccessMap />
       </section>
 

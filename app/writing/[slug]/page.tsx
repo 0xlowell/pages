@@ -25,29 +25,24 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const other = articles[(index + 1) % articles.length];
 
   return (
-    <article className="wrap narrow">
+    <article className="col">
       <header className="page-head">
-        <p className="crumbs">
-          <Link href="/writing/">← Writing</Link>
-        </p>
         <h1 className="page-title">{a.title}</h1>
         <p className="dek">{a.dek}</p>
         <p className="post-meta">
-          Lowell, <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read
+          <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read
         </p>
       </header>
       <div className="prose">
         <a.Body />
       </div>
-      <nav className="article-end" aria-label="More writing">
+      <nav className="page-end" aria-label="More writing">
         {other.slug !== a.slug && (
           <>
             <p className="label">Next</p>
             <p className="next">
-              <Link href={`/writing/${other.slug}/`}>
-                {other.title}
-                <Arrow />
-              </Link>
+              <Link href={`/writing/${other.slug}/`}>{other.title}</Link>
+              <Arrow />
             </p>
           </>
         )}

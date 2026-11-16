@@ -1,106 +1,96 @@
 import Link from "next/link";
-import ProjectCard, { EarlierWork, RoleKey } from "./components/ProjectCard";
-import { Arrow, GITHUB_URL } from "./components/Site";
+import { Arrow, GitHubLink, GITHUB_URL } from "./components/Site";
 import { articles, formatDate } from "./lib/articles";
 import { earlier } from "./lib/earlier";
 import { projects } from "./lib/projects";
 
-// One design position from each recent project.
-const rules = [
-  { text: "Procedures by default, a model for the step that needs one.", slug: "hybrid-automation" },
-  { text: "The interface shows. The server decides.", slug: "application-authorization" },
-  { text: "An assistant proposes. A person submits.", slug: "ai-workspaces" },
-];
-
 export default function Home() {
-  const [lead, ...rest] = projects;
   return (
-    <div data-page="home">
-      <div className="wrap hero">
-        <div>
-          <h1>
-            Lowell <span>AI Engineer</span>
-          </h1>
-          <p className="intro">
-            I design and build AI-powered applications, from agent workflows to the systems around them.
-          </p>
-          <ul className="hero-actions">
-            <li><Link className="btn" href="/#projects">See the projects</Link></li>
-            <li>
-              <a href={GITHUB_URL} rel="me noopener">
-                Find me on GitHub
-                <Arrow external />
-              </a>
-            </li>
-          </ul>
-        </div>
-        <nav className="rules" aria-labelledby="rules-title">
-          <h2 className="label" id="rules-title">Three rules from recent work</h2>
-          <ol>
-            {rules.map((r) => (
-              <li key={r.slug}>
-                <Link href={`/work/${r.slug}/`}>
-                  <span>{r.text}</span>
-                  <Arrow />
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      </div>
+    <div className="col" data-page="home">
+      <header className="who">
+        <h1>
+          Lowell <span>AI Engineer</span>
+        </h1>
+        <GitHubLink />
+      </header>
 
-      <section className="section" id="projects" aria-labelledby="projects-title">
-        <div className="wrap">
-          <div className="section-head">
-            <h2 id="projects-title">Selected projects</h2>
-            <RoleKey />
-          </div>
-          <div className="cards">
-            <ProjectCard project={lead} lead />
-            {rest.map((p) => (
-              <ProjectCard project={p} key={p.slug} />
-            ))}
-          </div>
-        </div>
+      <section className="intro">
+        <p className="lead">
+          I design and build AI-powered applications, from agent workflows to the systems around them.
+        </p>
+        <p>
+          Most of my work is the part around the model: what an agent is allowed to do, what it actually did, and
+          how the application recovers when a run, a stream or a person interrupts it.
+        </p>
+        <p className="muted">
+          This page describes what I am working on without the names. Employers and products stay private. The
+          engineering does not have to.
+        </p>
       </section>
 
-      <section className="section" id="writing" aria-labelledby="writing-title">
-        <div className="wrap">
-          <div className="section-head">
-            <h2 id="writing-title">Writing</h2>
-            <p>
-              <Link href="/writing/">
-                All writing
-                <Arrow />
-              </Link>
+      <section className="block" aria-labelledby="now-title">
+        <h2 className="label" id="now-title">Current work</h2>
+        {projects.map((p) => (
+          <article className="work" key={p.slug}>
+            <header>
+              <h3>{p.title}</h3>
+              <p className="role">{p.role}</p>
+            </header>
+            <p className="body">{p.body}</p>
+            <dl className="pairs">
+              {p.parts.map((x) => (
+                <div key={x.term}>
+                  <dt>{x.term}</dt>
+                  <dd>{x.text}</dd>
+                </div>
+              ))}
+              <div>
+                <dt>Stage</dt>
+                <dd>{p.stage}</dd>
+              </div>
+            </dl>
+            <p className="more">
+              <Link href={`/work/${p.slug}/`}>{p.more}</Link>
+              <Arrow />
             </p>
-          </div>
-          <ul className="posts">
-            {articles.map((a) => (
-              <li key={a.slug}>
-                <Link href={`/writing/${a.slug}/`}>
-                  <div>
-                    <h3>{a.title}</h3>
-                    <p className="dek">{a.dek}</p>
-                  </div>
-                  <p className="when">
-                    <time dateTime={a.date}>{formatDate(a.date)}</time>
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+          </article>
+        ))}
       </section>
 
-      <section className="section" id="earlier" aria-labelledby="earlier-title">
-        <div className="wrap">
-          <div className="section-head">
-            <h2 id="earlier-title">Earlier work</h2>
-            <p>Retrieval, platforms and agents.</p>
-          </div>
-          <EarlierWork items={earlier} />
-        </div>
+      <section className="block" aria-labelledby="earlier-title">
+        <h2 className="label" id="earlier-title">Earlier</h2>
+        <dl className="pairs">
+          {earlier.map((e) => (
+            <div key={e.title}>
+              <dt>
+                {e.title}
+                <small>{e.context}</small>
+              </dt>
+              <dd>{e.body}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="block" aria-labelledby="writing-title">
+        <h2 className="label" id="writing-title">Writing</h2>
+        <ul className="rows">
+          {articles.map((a) => (
+            <li key={a.slug}>
+              <Link href={`/writing/${a.slug}/`}>
+                <span>{a.title}</span>
+                <time dateTime={a.date}>{formatDate(a.date)}</time>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="block" aria-labelledby="contact-title">
+        <h2 className="label" id="contact-title">Contact</h2>
+        <p className="contact">
+          I am on GitHub as <a href={GITHUB_URL} rel="me noopener">0xlowell</a>.
+        </p>
       </section>
     </div>
   );

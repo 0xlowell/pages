@@ -3,13 +3,13 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SiteFooter, SiteHeader, SITE_URL } from "./components/Site";
 
-const satoshi = localFont({
+const switzer = localFont({
   src: [
-    { path: "./fonts/Satoshi-Variable.woff2", style: "normal" },
-    { path: "./fonts/Satoshi-VariableItalic.woff2", style: "italic" },
+    { path: "./fonts/Switzer-Variable.woff2", style: "normal" },
+    { path: "./fonts/Switzer-VariableItalic.woff2", style: "italic" },
   ],
   weight: "300 900",
-  variable: "--font-satoshi",
+  variable: "--font-switzer",
   display: "swap",
 });
 
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={satoshi.variable}>
+    <html lang="en" className={switzer.variable}>
       <body>
         <a className="skip" href="#main">
           Skip to content
