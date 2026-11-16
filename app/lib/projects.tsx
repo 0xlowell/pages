@@ -24,8 +24,8 @@ export const projects: Project[] = [
   {
     slug: "hybrid-automation",
     title: "Hybrid automation harness",
-    role: "I proposed the architecture",
-    body: "A business application has to be operated through its screens, on Windows over Citrix. The plan on the table was continuous computer use: take a screenshot, ask a model, click, repeat. I argued against making that the default. A coding-agent CLI becomes the harness and explores the application with a person guiding it. Journeys we understand are written down as deterministic procedures. Procedures run by default, and a model is called back only for the step that fails or the screen nobody has seen, then hands control back.",
+    role: "Architecture",
+    body: "A business application has to be operated through its screens, on Windows over Citrix. Continuous computer use (take a screenshot, ask a model, click, repeat) suits exploration, but it is a costly default for journeys that are already understood. Here a coding-agent CLI is the harness and explores the application with a person guiding it. Journeys we understand are written down as deterministic procedures. Procedures run by default, and a model is called back only for the step that fails or the screen nobody has seen, then hands control back.",
     parts: [
       {
         term: "Evidence",
@@ -44,7 +44,7 @@ export const projects: Project[] = [
     more: "Longer write-up, with a run you can step through",
     lede: "How to automate a business application through its screens without asking a model to decide every click.",
     facts: [
-      { label: "My part", value: "Questioned the original design and proposed this architecture" },
+      { label: "Role", value: "Architecture" },
       { label: "Stage", value: "Early, about a month in" },
       { label: "Setting", value: "Business application on Windows and Citrix" },
     ],
@@ -54,8 +54,8 @@ export const projects: Project[] = [
   {
     slug: "application-authorization",
     title: "Application authorization",
-    role: "I proposed the solution",
-    body: "The question brought to me: who can do what, across a growing number of internal applications. I proposed a shared authorization layer with a visual workspace on top. The identity provider keeps answering who you are. This layer answers what you may do.",
+    role: "Design and pilot",
+    body: "Who can do what, across a growing number of internal applications? The answer here is a shared authorization layer with a visual workspace on top. The identity provider keeps answering who you are. This layer answers what you may do.",
     parts: [
       {
         term: "Model",
@@ -74,7 +74,7 @@ export const projects: Project[] = [
     more: "Longer write-up, with a map you can click through",
     lede: "A shared way for applications to manage business permissions, with a map that makes the relationships visible.",
     facts: [
-      { label: "My part", value: "The problem was brought to me; I proposed the solution" },
+      { label: "Role", value: "Design and pilot" },
       { label: "Stage", value: "Connected local pilot" },
       { label: "Scope", value: "Shared across applications, not yet organisation-wide" },
     ],
@@ -84,8 +84,8 @@ export const projects: Project[] = [
   {
     slug: "ai-workspaces",
     title: "AI workspace and product intake",
-    role: "Existing products; I work on both",
-    body: "Two products I did not start. The first is an employee AI workspace: persistent conversations, authorized business tools, files, and interactive pages generated from data the person is allowed to see. The second helps employees turn a need into a structured request: an assistant proposes changes to the form, a person reviews and submits.",
+    role: "Contribution to existing products",
+    body: "Two existing products. The first is an employee AI workspace: persistent conversations, authorized business tools, files, and interactive pages generated from data the person is allowed to see. The second helps employees turn a need into a structured request: an assistant proposes changes to the form, a person reviews and submits.",
     parts: [
       {
         term: "State that survives",
@@ -104,7 +104,7 @@ export const projects: Project[] = [
     more: "Longer write-up",
     lede: "Two existing products that connect people, conversational AI and application actions.",
     facts: [
-      { label: "My part", value: "Continuing development and integration of existing products" },
+      { label: "Role", value: "Contribution to existing products" },
       { label: "Stage", value: "Ongoing" },
       { label: "Parts", value: "Employee AI workspace, assisted product intake" },
     ],

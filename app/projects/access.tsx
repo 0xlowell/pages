@@ -8,14 +8,14 @@ export default function AccessCase() {
         <h2>The problem</h2>
         <div>
           <p>
-            The problem was brought to me: how to manage who can do what in business applications as their number, and
+            How to manage who can do what in business applications as their number, and
             the number of roles, keeps growing. Each application handling it alone does not scale.
           </p>
         </div>
       </section>
 
       <section>
-        <h2>What I proposed</h2>
+        <h2>The approach</h2>
         <div>
           <p>
             A shared application-authorization layer with a visual workspace. The identity provider keeps handling

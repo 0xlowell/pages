@@ -4,11 +4,11 @@ export default function WorkspacesCase() {
   return (
     <>
       <section>
-        <h2>My role</h2>
+        <h2>Context</h2>
         <div>
           <p>
-            These are two existing products. I contribute to their continued development and to the integration between
-            them. I did not originate either of them, and I do not present them as mine.
+            These are two existing products. My work is on their continued development and on the integration between
+            them.
           </p>
         </div>
       </section>

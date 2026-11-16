@@ -27,7 +27,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <article className="col">
       <header className="page-head">
-        <h1 className="page-title">{a.title}</h1>
+        <h1 className="page-title" style={{ viewTransitionName: `t-writing-${a.slug}` }}>{a.title}</h1>
         <p className="dek">{a.dek}</p>
         <p className="post-meta">
           <time dateTime={a.date}>{formatDate(a.date)}</time>, {a.minutes} min read

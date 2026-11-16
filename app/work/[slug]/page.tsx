@@ -27,7 +27,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <article className="col">
       <header className="page-head">
-        <h1 className="page-title">{p.title}</h1>
+        <h1 className="page-title" style={{ viewTransitionName: `t-work-${p.slug}` }}>{p.title}</h1>
         <p className="lede">{p.lede}</p>
         <dl className="pairs">
           {p.facts.map((f) => (

@@ -22,7 +22,7 @@ export default function HybridCase() {
       </section>
 
       <section>
-        <h2>What I proposed</h2>
+        <h2>The approach</h2>
         <div>
           <ul>
             <li>A coding-agent CLI as the harness, instead of another bespoke agent loop.</li>

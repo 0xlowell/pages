@@ -13,7 +13,7 @@ export default function Work() {
   return (
     <div className="col">
       <section className="intro">
-        <h1 className="lead">
+        <h1 className="lead" style={{ viewTransitionName: "t-work" }}>
           I design and build AI-powered applications, from agent workflows to the systems around them.
         </h1>
         <p>
