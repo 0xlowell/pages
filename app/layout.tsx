@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { SiteFooter, SiteHeader, SITE_URL } from "./components/Site";
 
 export const metadata: Metadata = {
-  title: "Lowell ZIMA - Portfolio",
-  description: "AI / Agent / Infra",
+  metadataBase: new URL(SITE_URL + "/"),
+  title: { default: "Lowell, AI Engineer", template: "%s | Lowell" },
+  description:
+    "Lowell is an AI Engineer designing and building AI-powered applications, from agent workflows to the systems around them.",
+  alternates: { types: { "application/rss+xml": "writing/feed.xml" } },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-satoshi">
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          {children}
-        </main>
-        <Footer />
+    <html lang="en">
+      <body>
+        <a className="skip" href="#main">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

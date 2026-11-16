@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lowell's portfolio
 
-## Getting Started
+An AI engineering portfolio built with Next.js, React and Tailwind, published
+as static files on GitHub Pages.
 
-First, run the development server:
+## Local development
 
-```bash
+Use Linux-native Node.js 24 and npm.
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Validation and export
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The build includes TypeScript validation and exports to `out/`. Reproduce the
+GitHub Pages deployment path with:
 
-## Learn More
+```sh
+PAGES_BASE_PATH=/pages npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `app/lib/projects.tsx` and `app/projects/`: summaries and case studies.
+- `app/lib/articles.ts` and `app/articles/`: writing and article content.
+- `app/components/`: shared presentation and illustrative interactions.
+- `app/globals.css`: design tokens, layout and styles.
+- [Anonymized brief](docs/portfolio-brief.md): context for another designer.
+- [Claude prompt](docs/claude-design-prompt.md): an independent design handoff.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use Lowell as the only public name and GitHub-only contact. Examples use
+fictional data; do not add private screenshots or workplace artifacts.
 
-## Deploy on Vercel
+## Publication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+One workflow, `.github/workflows/deploy.yml`, validates pushes to `main`, builds
+with the Pages base path and deploys that artifact. It also supports manual
+execution. Do not queue a duplicate deployment while one is already running.
