@@ -260,6 +260,56 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
     if (d && !d.moved) select(sel === id ? null : id);
   };
 
+  // Moved nodes are remembered in this browser, so a refresh keeps them.
+  // Nodes that did not exist when the positions were saved use the layout.
+  const STORE = "lowell-map-positions-v1";
+  const restored = useRef(false);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORE) || "null") as Record<string, Pt> | null;
+        if (saved) {
+          setPos((m) => {
+            const next = new Map(m);
+            Object.entries(saved).forEach(([id, p]) => {
+              if (next.has(id) && Number.isFinite(p?.x) && Number.isFinite(p?.y)) next.set(id, { x: p.x, y: p.y });
+            });
+            return next;
+          });
+        }
+      } catch {
+        // Storage can be unavailable (private mode, blocked site data); the layout still works.
+      }
+      restored.current = true;
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    if (!restored.current) return;
+    try {
+      const changed: Record<string, Pt> = {};
+      nodes.forEach((n) => {
+        const p = pos.get(n.id)!;
+        if (p.x !== n.x || p.y !== n.y) changed[n.id] = p;
+      });
+      if (Object.keys(changed).length) localStorage.setItem(STORE, JSON.stringify(changed));
+      else localStorage.removeItem(STORE);
+    } catch {
+      // Not saved; nothing else depends on it.
+    }
+  }, [pos, nodes]);
+
+  // Put every node back where the layout placed it.
+  const arrange = useCallback(() => {
+    setPos(new Map(nodes.map((n) => [n.id, { x: n.x, y: n.y }])));
+  }, [nodes]);
+
+  const moved = nodes.some((n) => {
+    const p = pos.get(n.id)!;
+    return p.x !== n.x || p.y !== n.y;
+  });
+
   /* ---------- Keyboard ---------- */
 
   useEffect(() => {
@@ -275,12 +325,13 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
         if (sel) select(null);
       } else if (e.key === "f") frame(null);
       else if (e.key === "t") setView((v) => (v === "graph" ? "tree" : "graph"));
+      else if (e.key === "a") arrange();
       else if (e.key === "=" || e.key === "+") zoomBy(1.2);
       else if (e.key === "-") zoomBy(1 / 1.2);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [palette, sel, select, frame, zoomBy]);
+  }, [palette, sel, select, frame, zoomBy, arrange]);
 
   /* ---------- Geometry ---------- */
 
@@ -545,6 +596,11 @@ export default function Canvas({ nodes, edges, subjects }: { nodes: GNode[]; edg
               +
             </button>
           </div>
+        )}
+        {view === "graph" && moved && (
+          <button type="button" onClick={arrange} title="Put nodes back in order (A)">
+            Arrange
+          </button>
         )}
         <button type="button" className="search" onClick={() => setPalette(true)}>
           Search <kbd>/</kbd>

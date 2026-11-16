@@ -534,6 +534,15 @@ body:has([data-page="home"]) .site-footer {
   cursor: grabbing;
 }
 
+/* Nodes glide home when the layout is restored. */
+@media (prefers-reduced-motion: no-preference) {
+  .studio:not([data-dragging]) .node {
+    transition-property: opacity, border-color, box-shadow, translate, left, top;
+    transition-duration: 200ms, 160ms, 200ms, 200ms, 420ms, 420ms;
+    transition-timing-function: ease-out, ease-out, ease-out, ease-out, cubic-bezier(0.2, 0.8, 0.2, 1), cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
 .node-head {
   display: flex;
   justify-content: space-between;
