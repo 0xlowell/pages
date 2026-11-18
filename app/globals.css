@@ -425,12 +425,12 @@ li {
 
 /* ---------- Home: the farm ---------- */
 
-body:has([data-page="home"]) .site-header,
-body:has([data-page="home"]) .site-footer {
+body:has([data-page="farm"]) .site-header,
+body:has([data-page="farm"]) .site-footer {
   display: none;
 }
 
-body:has([data-page="home"]) {
+body:has([data-page="farm"]) {
   background: #5a8f3c;
 }
 
@@ -879,6 +879,422 @@ body:has([data-page="home"]) {
   .f-scroll {
     overflow-x: auto;
   }
+}
+
+/* ---------- Home: the logbook ---------- */
+
+body:has([data-page="home"]) .site-header,
+body:has([data-page="home"]) .site-footer {
+  display: none;
+}
+
+.log {
+  padding-top: clamp(2.5rem, 8vw, 5rem);
+  font-size: 1.125rem;
+}
+
+.log a {
+  color: #1f4fbf;
+  text-decoration-color: rgb(31 79 191 / 0.35);
+}
+
+.log a:visited {
+  color: #6b3fa0;
+}
+
+.log a:hover {
+  text-decoration-color: currentColor;
+}
+
+.log-head h1 {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 7vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.log-head h1 .sprout {
+  width: 32px;
+  height: 32px;
+  background-size: 256px auto;
+  margin-bottom: 0.35rem;
+}
+
+.log-lede {
+  margin: 1rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.45;
+}
+
+.log-nav {
+  margin: 1rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.log-section {
+  margin-top: 3rem;
+}
+
+.log-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.log-section h2::after {
+  content: "";
+  flex: 1;
+  border-top: 1px dashed var(--line);
+}
+
+.entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entries li {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.entries time {
+  padding-top: 0.2rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.entries .dek {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: 1rem;
+  color: var(--ink-2);
+}
+
+@media (max-width: 34rem) {
+  .entries li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+.note {
+  margin: 0 0 1rem;
+  color: var(--ink-2);
+}
+
+.note .key {
+  white-space: nowrap;
+}
+
+.sprout {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-size: 128px auto;
+  image-rendering: pixelated;
+  vertical-align: -2px;
+}
+
+/* The garden as a tree */
+.gt {
+  position: relative;
+  padding-right: 90px;
+}
+
+@media (max-width: 34rem) {
+  .gt {
+    padding-right: 40px;
+  }
+}
+
+.gt-root {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.gt-branches,
+.gt-leaves {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Tree connectors: a stem down the left, an elbow to each child. */
+.gt-branches {
+  margin-left: 11px;
+  border-left: 2px solid #8fb07a;
+}
+
+.gt-branch {
+  position: relative;
+  padding: 1.125rem 0 0 1.5rem;
+}
+
+.gt-branch:last-child {
+  margin-left: -2px;
+  border-left: 2px solid var(--bg);
+}
+
+.gt-branch::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 1.25rem;
+  height: calc(1.125rem + 0.95rem);
+  border-left: 2px solid #8fb07a;
+  border-bottom: 2px solid #8fb07a;
+  border-bottom-left-radius: 12px;
+}
+
+.gt-subject {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.25rem 0.75rem;
+  background: #e6efd6;
+  border: 1px solid #b9cfa2;
+  border-radius: 999px;
+  cursor: default;
+}
+
+.gt-name {
+  font-family: var(--serif);
+  font-size: 1.1875rem;
+  font-style: italic;
+  color: #2f5a26;
+}
+
+.gt-count {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: #6f8a5a;
+}
+
+.gt-leaves {
+  margin: 0.25rem 0 0 1.25rem;
+  border-left: 2px solid #c9dbb6;
+}
+
+.gt-leaf {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.375rem 0 0.375rem 1.25rem;
+}
+
+.gt-leaf:last-child {
+  margin-left: -2px;
+  border-left: 2px solid var(--bg);
+}
+
+.gt-leaf::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 1rem;
+  height: 1.05rem;
+  border-left: 2px solid #c9dbb6;
+  border-bottom: 2px solid #c9dbb6;
+  border-bottom-left-radius: 8px;
+}
+
+.gt-empty {
+  margin: 0.25rem 0 0 1.25rem;
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.gt-leaves:empty {
+  display: none;
+}
+
+.gt-ico {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.1rem;
+}
+
+.gt-fruit {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  background: #d4643f;
+  box-shadow: inset 3px 3px 0 #f2a487;
+}
+
+.gt-text {
+  line-height: 1.4;
+}
+
+.gt-kind {
+  margin-right: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b0573a;
+}
+
+.gt-leaf[data-kind="article"] .gt-text a {
+  font-style: italic;
+}
+
+.gt-also {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.gt-links {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.gt-links path {
+  fill: none;
+  stroke: #d9a24a;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  opacity: 0.55;
+}
+
+.gt-links path[data-on] {
+  stroke-dasharray: none;
+  stroke-width: 2;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gt-leaf,
+  .gt-subject,
+  .gt-links path {
+    transition:
+      opacity 180ms ease-out,
+      stroke-width 180ms ease-out;
+  }
+}
+
+.gt[data-hover] .gt-leaf:not([data-on]),
+.gt[data-hover] .gt-branch:not([data-on]) > .gt-subject {
+  opacity: 0.35;
+}
+
+.gt[data-hover] .gt-links path:not([data-on]) {
+  opacity: 0.15;
+}
+
+.bed + .bed {
+  margin-top: 1.25rem;
+}
+
+.bed h3 {
+  margin: 0 0 0.25rem;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.bed ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bed li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+}
+
+.bed li .sprout {
+  width: 24px;
+  height: 24px;
+  background-size: 192px auto;
+  margin-top: 0.05rem;
+}
+
+.also {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.tags span {
+  padding: 0.125rem 0.625rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.tags small {
+  color: var(--ink-2);
+}
+
+.people ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.people li + li {
+  margin-top: 0.5rem;
+}
+
+.log-foot {
+  margin-top: 4rem;
+  padding: 1.25rem 0 3rem;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+
+.log-foot p {
+  margin: 0;
 }
 
 /* ---------- Inner pages ---------- */
