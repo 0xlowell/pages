@@ -1,0 +1,7 @@
+Pixel art used on the home page, both released into the public domain (CC0 1.0):
+
+- town.png: "Tiny Town" by Kenney, https://kenney.nl/assets/tiny-town
+- farm.png, farm-trees.png: "PixelFarm" (free version) by LushMustache,
+  https://lushmustache.itch.io/pixelfarm
+
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/

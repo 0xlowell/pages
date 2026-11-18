@@ -10,6 +10,13 @@ const mono = localFont({
   display: "swap",
 });
 
+const pixel = localFont({
+  src: [{ path: "./fonts/Silkscreen-Regular.woff2", style: "normal" }],
+  weight: "400",
+  variable: "--font-pixel",
+  display: "swap",
+});
+
 const serif = localFont({
   src: [
     { path: "./fonts/Newsreader-Variable.woff2", style: "normal" },
@@ -30,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${mono.variable} ${serif.variable}`}>
+    <html lang="en" className={`${mono.variable} ${serif.variable} ${pixel.variable}`}>
       <body>
         <a className="skip" href="#main">
           Skip to content

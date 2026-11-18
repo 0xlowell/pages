@@ -1,12 +1,12 @@
-import Canvas from "./components/Canvas";
-import { buildGraph } from "./lib/graph";
+import Farm from "./components/Farm";
+import { buildFarm } from "./lib/farm";
 
 export default function Home() {
-  const { nodes, edges, subjects, plants } = buildGraph();
+  const farm = buildFarm();
   return (
     <div data-page="home">
-      <h1 className="sr-only">Lowell, a map of linked ideas</h1>
-      <Canvas nodes={nodes} edges={edges} subjects={subjects} plants={plants} />
+      <h1 className="sr-only">Lowell&apos;s garden of ideas</h1>
+      <Farm {...farm} base={process.env.PAGES_BASE_PATH || ""} />
     </div>
   );
 }
